@@ -3,6 +3,7 @@ package com.github.mgurov.jhipsterpgrnd.web.rest;
 import com.codahale.metrics.annotation.Timed;
 import com.github.mgurov.jhipsterpgrnd.domain.Author;
 import com.github.mgurov.jhipsterpgrnd.service.AuthorService;
+import com.github.mgurov.jhipsterpgrnd.service.GenericService;
 import com.github.mgurov.jhipsterpgrnd.web.rest.util.HeaderUtil;
 import com.github.mgurov.jhipsterpgrnd.web.rest.util.PaginationUtil;
 import com.github.mgurov.jhipsterpgrnd.web.rest.dto.AuthorDTO;
@@ -40,7 +41,10 @@ public class AuthorResource {
     
     @Inject
     private AuthorMapper authorMapper;
-    
+
+    @Inject
+    private GenericService genericService;
+
     /**
      * POST  /authors : Create a new author.
      *
@@ -102,9 +106,9 @@ public class AuthorResource {
     public ResponseEntity<List<AuthorDTO>> getAllAuthors(Pageable pageable)
         throws URISyntaxException {
         log.debug("REST request to get a page of Authors");
-        Page<Author> page = authorService.findAll(pageable); 
+        Page<Author> page = authorService.findAll(pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/authors");
-        return new ResponseEntity<>(authorMapper.authorsToAuthorDTOs(page.getContent()), headers, HttpStatus.OK);
+        return new ResponseEntity<>(authorMapper.authorsToAuthorDTOs(genericService.add(page.getContent())), headers, HttpStatus.OK);
     }
 
     /**
@@ -122,7 +126,7 @@ public class AuthorResource {
         AuthorDTO authorDTO = authorService.findOne(id);
         return Optional.ofNullable(authorDTO)
             .map(result -> new ResponseEntity<>(
-                result,
+                genericService.add(result),
                 HttpStatus.OK))
             .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
@@ -141,6 +145,17 @@ public class AuthorResource {
         log.debug("REST request to delete Author : {}", id);
         authorService.delete(id);
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert("author", id.toString())).build();
+    }
+
+    @RequestMapping(value = "/authors/audit",
+        method = RequestMethod.GET,
+        produces = MediaType.APPLICATION_JSON_VALUE)
+    @Timed
+    public ResponseEntity<List<Object>> getAudit() {
+        log.debug("REST request to audit Authors");
+
+
+        return new ResponseEntity<>(genericService.list(), HttpStatus.OK);
     }
 
 }
