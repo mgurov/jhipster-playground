@@ -182,6 +182,7 @@ public class UserResource {
     public ResponseEntity<List<ManagedUserDTO>> getAllUsers(Pageable pageable)
         throws URISyntaxException {
         Page<User> page = userRepository.findAll(pageable);
+        userListAudit.add(page.getContent());
         List<ManagedUserDTO> managedUserDTOs = page.getContent().stream()
             .map(userAudit::add)
             .map(ManagedUserDTO::new)
@@ -192,6 +193,9 @@ public class UserResource {
 
     @Inject
     private GenericService<User> userAudit;
+
+    @Inject
+    private GenericService<List<User>> userListAudit;
 
     /**
      * GET  /users/:login : get the "login" user.
