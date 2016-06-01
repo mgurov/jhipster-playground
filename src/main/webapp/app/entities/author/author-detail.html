@@ -1,0 +1,22 @@
+
+<div>
+    <h2><span>Author</span> {{vm.author.id}}</h2>
+    <hr>
+    <jhi-alert-error></jhi-alert-error>
+    <dl class="dl-horizontal jh-entity-details">
+        <dt><span>Description</span></dt>
+        <dd>
+            <span>{{vm.author.description}}</span>
+        </dd>
+        <dt><span>Timestamp</span></dt>
+        <dd>
+            <span>{{vm.author.timestamp | date:'medium'}}</span>
+        </dd>
+    </dl>
+
+    <button type="submit"
+            onclick="window.history.back()"
+            class="btn btn-info">
+        <span class="glyphicon glyphicon-arrow-left"></span>&nbsp;<span> Back</span>
+    </button>
+</div>

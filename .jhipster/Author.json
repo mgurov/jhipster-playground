@@ -1,0 +1,18 @@
+{
+    "relationships": [],
+    "fields": [
+        {
+            "fieldName": "description",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "timestamp",
+            "fieldType": "ZonedDateTime"
+        }
+    ],
+    "changelogDate": "20160601181553",
+    "dto": "mapstruct",
+    "service": "serviceClass",
+    "entityTableName": "author",
+    "pagination": "infinite-scroll"
+}
