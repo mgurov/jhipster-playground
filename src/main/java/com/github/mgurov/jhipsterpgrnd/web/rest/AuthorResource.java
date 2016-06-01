@@ -43,7 +43,7 @@ public class AuthorResource {
     private AuthorMapper authorMapper;
 
     @Inject
-    private GenericService genericService;
+    private GenericService<AuthorDTO> genericService;
 
     /**
      * POST  /authors : Create a new author.
@@ -108,7 +108,8 @@ public class AuthorResource {
         log.debug("REST request to get a page of Authors");
         Page<Author> page = authorService.findAll(pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/authors");
-        return new ResponseEntity<>(authorMapper.authorsToAuthorDTOs(genericService.add(page.getContent())), headers, HttpStatus.OK);
+        //page.getContent().forEach(genericService::add);
+        return new ResponseEntity<>(authorMapper.authorsToAuthorDTOs(page.getContent()), headers, HttpStatus.OK);
     }
 
     /**
@@ -124,6 +125,7 @@ public class AuthorResource {
     public ResponseEntity<AuthorDTO> getAuthor(@PathVariable Long id) {
         log.debug("REST request to get Author : {}", id);
         AuthorDTO authorDTO = authorService.findOne(id);
+        genericService.add(authorDTO);
         return Optional.ofNullable(authorDTO)
             .map(result -> new ResponseEntity<>(
                 genericService.add(result),

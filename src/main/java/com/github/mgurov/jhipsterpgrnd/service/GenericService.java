@@ -6,10 +6,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class GenericService {
+public class GenericService <T> {
     private List<Object> auditTrail = new ArrayList<>();
 
-    public <T> T add(T o) {
+    public T add(T o) {
         auditTrail.add(o);
         return o;
     }
