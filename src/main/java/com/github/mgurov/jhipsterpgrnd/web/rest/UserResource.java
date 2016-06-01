@@ -7,6 +7,7 @@ import com.github.mgurov.jhipsterpgrnd.domain.User;
 import com.github.mgurov.jhipsterpgrnd.repository.AuthorityRepository;
 import com.github.mgurov.jhipsterpgrnd.repository.UserRepository;
 import com.github.mgurov.jhipsterpgrnd.security.AuthoritiesConstants;
+import com.github.mgurov.jhipsterpgrnd.service.GenericService;
 import com.github.mgurov.jhipsterpgrnd.service.MailService;
 import com.github.mgurov.jhipsterpgrnd.service.UserService;
 import com.github.mgurov.jhipsterpgrnd.web.rest.dto.ManagedUserDTO;
@@ -182,11 +183,15 @@ public class UserResource {
         throws URISyntaxException {
         Page<User> page = userRepository.findAll(pageable);
         List<ManagedUserDTO> managedUserDTOs = page.getContent().stream()
+            .map(userAudit::add)
             .map(ManagedUserDTO::new)
             .collect(Collectors.toList());
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/users");
         return new ResponseEntity<>(managedUserDTOs, headers, HttpStatus.OK);
     }
+
+    @Inject
+    private GenericService<User> userAudit;
 
     /**
      * GET  /users/:login : get the "login" user.
